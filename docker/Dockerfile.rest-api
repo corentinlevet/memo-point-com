@@ -1,0 +1,19 @@
+# REST API Dockerfile
+
+# Import base image
+FROM golang:latest
+
+# Set working directory
+WORKDIR /app
+
+# Copy go mod and sum files
+COPY rest-api/go* ./
+
+# Download all dependencies
+RUN go mod download
+
+# Copy files
+COPY rest-api .
+
+# # Build and then start the rest-api
+CMD [ "sh", "-c", "make build && ./bin/rest-api" ]

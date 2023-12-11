@@ -1,13 +1,19 @@
 package services
 
 import (
+	"errors"
 	"memo-point-com/internal/database"
 	"memo-point-com/internal/models"
 )
 
 type UserService struct{}
 
-func (service *UserService) CreateUser(username, email, password, salt string) error {
+func (service *UserService) CreateUser(username, email, password string) error {
+	toCheck, _ := service.GetUserByEmail(email)
+	if toCheck != nil {
+		return errors.New("Email already exists")
+	}
+
 	salt, err := database.GenerateSalt()
 	if err != nil {
 		return err
@@ -44,15 +50,15 @@ func (service *UserService) GetUsers() ([]models.User, error) {
 	return users, nil
 }
 
-func (service *UserService) GetUserByEmail(email string) (models.User, error) {
+func (service *UserService) GetUserByEmail(email string) (*models.User, error) {
 	var user models.User
 
 	err := database.DbInstance.Where("email = ?", email).First(&user).Error
 	if err != nil {
-		return user, err
+		return nil, err
 	}
 
-	return user, nil
+	return &user, nil
 }
 
 func (service *UserService) GetUserByUsernameAndPassword(username, password string) (*models.User, error) {

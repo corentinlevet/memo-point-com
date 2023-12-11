@@ -23,6 +23,7 @@ func initAuth(router *gin.Engine) {
 	authGroup := router.Group("/auth")
 	{
 		authGroup.POST("/login", authController.Login)
+		authGroup.POST("/signup", authController.Signup)
 	}
 }
 

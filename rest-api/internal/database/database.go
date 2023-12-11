@@ -24,11 +24,15 @@ func GenerateSalt() (string, error) {
 	return hex.EncodeToString(saltBytes), nil
 }
 
-func HashPassword(password, salt string) string {
+func HashPassword(password, salt string) (string, error) {
 	hash := sha256.New()
-	hash.Write([]byte(password + salt))
+	_, err := hash.Write([]byte(password + salt))
+	if err != nil {
+		return "", err
+	}
+
 	hashedPassword := hex.EncodeToString(hash.Sum(nil))
-	return hashedPassword
+	return hashedPassword, nil
 }
 
 func ConnectToMariaDB() (*gorm.DB, error) {

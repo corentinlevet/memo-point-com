@@ -1,9 +1,30 @@
 package network
 
 import (
+	"memo-point-com/internal/controllers"
+	"memo-point-com/internal/services"
+
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
+
+func initAuth(router *gin.Engine) {
+	userService := &services.UserService{}
+
+	authService := &services.AuthService{
+		UserService: userService,
+	}
+
+	authController := &controllers.AuthController{
+		AuthService: authService,
+		UserService: userService,
+	}
+
+	authGroup := router.Group("/auth")
+	{
+		authGroup.POST("/login", authController.Login)
+	}
+}
 
 func InitRoutes() {
 	router := gin.Default()
@@ -16,12 +37,7 @@ func InitRoutes() {
 
 	router.Use(cors)
 
-	// Routes
-	router.GET("/", func(c *gin.Context) {
-		c.JSON(200, gin.H{
-			"message": "Server running on port 8080",
-		})
-	})
+	initAuth(router)
 
 	router.Run(":8080")
 }

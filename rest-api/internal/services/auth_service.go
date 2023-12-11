@@ -14,10 +14,6 @@ func (service *AuthService) Login(username, password string) (*models.User, erro
 		return nil, err
 	}
 
-	if user.Password != password {
-		return nil, err
-	}
-
 	return user, nil
 }
 

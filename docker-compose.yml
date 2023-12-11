@@ -13,3 +13,22 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       MYSQL_DATABASE: ${MYSQL_DATABASE}
+
+  rest-api:
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfile.rest-api
+    container_name: mpc-rest-api
+    depends_on:
+      - database
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./rest-api:/app
+    environment:
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      DATABASE_HOST: ${DATABASE_HOST}
+      DATABASE_PORT: ${DATABASE_PORT}

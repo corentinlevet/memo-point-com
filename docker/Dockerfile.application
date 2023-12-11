@@ -1,0 +1,13 @@
+# Application Dockerfile
+
+# Base image
+FROM node:latest
+
+# Set working directory
+WORKDIR /app
+
+# Copy package.json and package-lock.json
+COPY application/package*.json ./
+
+# Install dependencies and launch web app
+CMD [ "sh", "-c", "npm install && npm run dev" ]

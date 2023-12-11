@@ -1,6 +1,18 @@
 version: "3"
 
 services:
+  application:
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfile.application
+    container_name: mpc-application
+    depends_on:
+      - rest-api
+    ports:
+      - "8081:8081"
+    volumes:
+      - ./application:/app
+
   database:
     build:
       context: .

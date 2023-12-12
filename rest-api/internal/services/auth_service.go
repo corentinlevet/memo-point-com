@@ -14,6 +14,10 @@ func (service *AuthService) Login(username, password string) (*models.User, erro
 		return nil, err
 	}
 
+	if user == nil {
+		return nil, nil
+	}
+
 	user, err = service.UserService.RefreshAuthToken(user)
 	if err != nil {
 		return nil, err

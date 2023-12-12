@@ -40,6 +40,13 @@ func (controller *AuthController) Login(ctx *gin.Context) {
 		return
 	}
 
+	if user == nil {
+		ctx.JSON(404, gin.H{
+			"message": "User not found",
+		})
+		return
+	}
+
 	ctx.JSON(200, gin.H{
 		"message":    "Login successful",
 		"auth_token": user.AuthToken,

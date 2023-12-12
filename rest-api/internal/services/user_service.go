@@ -6,7 +6,9 @@ import (
 	"memo-point-com/internal/models"
 )
 
-type UserService struct{}
+type UserService struct {
+	TokenService *TokenService
+}
 
 func (service *UserService) CreateUser(username, email, password string) error {
 	toCheck, _ := service.GetUserByEmail(email)
@@ -24,11 +26,17 @@ func (service *UserService) CreateUser(username, email, password string) error {
 		return err
 	}
 
+	token, err := service.TokenService.GenerateTokenForUser(username, email)
+	if err != nil {
+		return err
+	}
+
 	user := models.User{
-		Username: username,
-		Email:    email,
-		Password: hashedPassword,
-		Salt:     salt,
+		Username:  username,
+		Email:     email,
+		Password:  hashedPassword,
+		Salt:      salt,
+		AuthToken: token,
 	}
 
 	err = database.DbInstance.Create(&user).Error
@@ -37,6 +45,22 @@ func (service *UserService) CreateUser(username, email, password string) error {
 	}
 
 	return nil
+}
+
+func (service *UserService) RefreshAuthToken(user *models.User) (*models.User, error) {
+	token, err := service.TokenService.GenerateTokenForUser(user.Username, user.Email)
+	if err != nil {
+		return nil, err
+	}
+
+	err = database.DbInstance.Model(user).Update("auth_token", token).Error
+	if err != nil {
+		return nil, err
+	}
+
+	user.AuthToken = token
+
+	return user, nil
 }
 
 func (service *UserService) GetUsers() ([]models.User, error) {

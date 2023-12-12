@@ -9,7 +9,11 @@ import (
 )
 
 func initAuth(router *gin.Engine) {
-	userService := &services.UserService{}
+	tokenService := &services.TokenService{}
+
+	userService := &services.UserService{
+		TokenService: tokenService,
+	}
 
 	authService := &services.AuthService{
 		UserService: userService,

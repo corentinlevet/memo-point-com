@@ -41,8 +41,8 @@ func (controller *AuthController) Login(ctx *gin.Context) {
 	}
 
 	ctx.JSON(200, gin.H{
-		"message": "Login successful",
-		"user_id": user.ID,
+		"message":    "Login successful",
+		"auth_token": user.AuthToken,
 	})
 }
 
@@ -77,7 +77,7 @@ func (controller *AuthController) Signup(ctx *gin.Context) {
 	}
 
 	ctx.JSON(200, gin.H{
-		"message": "Signup successful",
-		"user_id": user.ID,
+		"message":    "Signup successful",
+		"auth_token": user.AuthToken,
 	})
 }

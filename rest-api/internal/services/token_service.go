@@ -1,14 +1,13 @@
 package services
 
 import (
+	"os"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
 )
 
 type TokenService struct{}
-
-const secretKey = "eYIuY8Hworcb9nTMNssY9wefz2FmIcgMaOTGk3jdxcNrcHtJy6p8gg468HC2eVGa"
 
 func (service *TokenService) GenerateTokenForUser(username, email string) (string, error) {
 	claims := jwt.MapClaims{
@@ -18,7 +17,7 @@ func (service *TokenService) GenerateTokenForUser(username, email string) (strin
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	signedToken, err := token.SignedString([]byte(secretKey))
+	signedToken, err := token.SignedString([]byte(os.Getenv("AUTH_SECRET_KEY")))
 	if err != nil {
 		return "", err
 	}
@@ -30,7 +29,7 @@ func (service *TokenService) ValidateToken(token string) (jwt.MapClaims, error) 
 	claims := jwt.MapClaims{}
 
 	_, err := jwt.ParseWithClaims(token, claims, func(token *jwt.Token) (interface{}, error) {
-		return []byte(secretKey), nil
+		return []byte(os.Getenv("AUTH_SECRET_KEY")), nil
 	})
 
 	if err != nil {

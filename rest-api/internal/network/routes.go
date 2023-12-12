@@ -37,7 +37,7 @@ func InitRoutes() {
 	cors := cors.New(cors.Config{
 		AllowOrigins: []string{"http://localhost:8081"},
 		AllowMethods: []string{"GET", "POST", "PUT", "DELETE"},
-		AllowHeaders: []string{"Content-Type"},
+		AllowHeaders: []string{"Content-Type", "Auth-Token"},
 	})
 
 	router.Use(cors)

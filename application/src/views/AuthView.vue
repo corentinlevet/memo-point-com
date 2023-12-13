@@ -6,15 +6,20 @@
 
 <template>
   <div class="page-container">
-    <div class="login-container">
-      <div class="login-header">
-        <div class="text">Login</div>
+    <div class="auth-container">
+      <div class="auth-header">
+        <div id="auth-title" class="text">Sign up</div>
         <div class="underline"></div>
       </div>
       <div class="inputs">
         <div class="input">
           <img src="../assets/Auth/person.png" alt="user icon" />
           <input type="text" v-model="username" placeholder="Username" required />
+        </div>
+
+        <div id="email-input" style="display: flex;" class="input">
+          <img src="../assets/Auth/email.png" alt="email icon" />
+          <input type="email" v-model="email" placeholder="Email" required />
         </div>
 
         <div class="input">
@@ -24,7 +29,8 @@
       </div>
 
       <div class="submit-container">
-        <div class="submit" @click="submitForm">Login</div>
+        <div id="btn-sign-up" class="submit" @click="handleSignUp">Sign up</div>
+        <div id="btn-log-in" class="submit gray" @click="handleLogIn">Log in</div>
       </div>
     </div>
   </div>
@@ -32,7 +38,9 @@
 
 <script lang="ts">
   let username = '';
+  let email = '';
   let password = '';
+  let isOnSignUp = true;
 
   async function logIn() {
     goServer.logIn(username, password).then((response) => {
@@ -59,9 +67,92 @@
     });
   }
 
-  const submitForm = () => {
-    logIn();
-  };
+  async function signUp() {
+    goServer.signUp(username, email, password).then((response) => {
+      if (response.status === 200)
+      {
+        const auth_token = response.data.auth_token;
+        goServer.setAuthToken(auth_token);
+
+        console.log('Signed up');
+      }
+      else
+      {
+        console.log('Unknown response');
+      }
+    }).catch((error) => {
+      if (error.response.status === 400)
+      {
+        console.log("Bad request");
+      }
+      else
+      {
+        console.log('Server error');
+      }
+    });
+  }
+
+  function handleLogIn() {
+    if (isOnSignUp)
+    {
+      isOnSignUp = false;
+      const authTitle = document.getElementById('auth-title');
+      if (authTitle)
+      {
+        authTitle.innerHTML = 'Log in';
+      }
+      const btnSignUp = document.getElementById('btn-sign-up');
+      if (btnSignUp)
+      {
+        btnSignUp.classList.add('gray');
+      }
+      const btnLogIn = document.getElementById('btn-log-in');
+      if (btnLogIn)
+      {
+        btnLogIn.classList.remove('gray');
+      }
+      const emailInput = document.getElementById('email-input');
+      if (emailInput)
+      {
+        emailInput.style.display = 'none';
+      }
+    }
+    else
+    {
+      logIn();
+    }
+  }
+
+  function handleSignUp() {
+    if (!isOnSignUp)
+    {
+      isOnSignUp = true;
+      const authTitle = document.getElementById('auth-title');
+      if (authTitle)
+      {
+        authTitle.innerHTML = 'Sign up';
+      }
+      const btnSignUp = document.getElementById('btn-sign-up');
+      if (btnSignUp)
+      {
+        btnSignUp.classList.remove('gray');
+      }
+      const btnLogIn = document.getElementById('btn-log-in');
+      if (btnLogIn)
+      {
+        btnLogIn.classList.add('gray');
+      }
+      const emailInput = document.getElementById('email-input');
+      if (emailInput)
+      {
+        emailInput.style.display = 'flex';
+      }
+    }
+    else
+    {
+      signUp();
+    }
+  }
 </script>
 
 <style scoped>
@@ -76,7 +167,7 @@
     justify-content: center;
   }
 
-  .login-container {
+  .auth-container {
     display: flex;
     flex-direction: column;
     margin: auto;
@@ -86,7 +177,7 @@
     min-height: 600px;
   }
 
-  .login-header {
+  .auth-header {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -159,6 +250,11 @@
     font-size: 20px;
     font-weight: 700;
     cursor: pointer;
+  }
+
+  .gray {
+    background: #EAEAEA;
+    color: #676767;
   }
 
 </style>

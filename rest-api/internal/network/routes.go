@@ -31,6 +31,29 @@ func initAuth(router *gin.Engine) {
 	}
 }
 
+func initMemo(router *gin.Engine) {
+	tokenService := &services.TokenService{}
+
+	userService := &services.UserService{
+		TokenService: tokenService,
+	}
+
+	memoService := &services.MemoService{}
+
+	memoController := &controllers.MemoController{
+		MemoService: memoService,
+		UserService: userService,
+	}
+
+	memoGroup := router.Group("/memos")
+	{
+		memoGroup.POST("", memoController.CreateMemo)
+		memoGroup.GET("", memoController.GetMemos)
+		memoGroup.PUT("", memoController.UpdateMemo)
+		memoGroup.DELETE("", memoController.DeleteMemo)
+	}
+}
+
 func InitRoutes() {
 	router := gin.Default()
 
@@ -43,6 +66,7 @@ func InitRoutes() {
 	router.Use(cors)
 
 	initAuth(router)
+	initMemo(router)
 
 	router.Run(":8080")
 }

@@ -78,6 +78,8 @@
   margin: 20px auto;
   margin-top: auto;
   margin-bottom: 30px;
+  justify-content: center;
+  padding-top: 3rem;
 }
 
 .submit {

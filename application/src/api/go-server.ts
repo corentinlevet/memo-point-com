@@ -10,13 +10,20 @@ class GoServer {
       timeout: 1000,
       headers: {
         'Content-Type': 'application/json',
-        'Auth-Token': null,
       },
     });
   }
 
   setAuthToken(token: string) {
-    this.client.defaults.headers.common['Auth-Token'] = token;
+    localStorage.setItem('authToken', token);
+  }
+
+  getAuthToken() {
+    return localStorage.getItem('authToken');
+  }
+
+  removeAuthToken() {
+    localStorage.removeItem('authToken');
   }
 
   async logIn(username: string, password: string) {

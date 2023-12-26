@@ -107,3 +107,14 @@ func (service *UserService) GetUserByUsernameAndPassword(username, password stri
 
 	return nil, nil
 }
+
+func (service *UserService) GetUserByAuthToken(authToken string) (*models.User, error) {
+	var user models.User
+
+	err := database.DbInstance.Where("auth_token = ?", authToken).First(&user).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return &user, nil
+}
